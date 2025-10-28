@@ -1,16 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
+  // Function to load todos from localStorage
+  const loadTodos = () => {
+    const savedTodos = localStorage.getItem('todos')
+    if (savedTodos) {
+      return JSON.parse(savedTodos)
+    }
+    // Default todos if nothing in localStorage
+    return [
+      { id: 1, text: "Learn React basics", completed: false },
+      { id: 2, text: "Build a todo app", completed: false },
+      { id: 3, text: "Master React hooks", completed: false }
+    ]
+  }
+
   // State for managing todos
-  const [todos, setTodos] = useState([
-    { id: 1, text: "Learn React basics", completed: false },
-    { id: 2, text: "Build a todo app", completed: false },
-    { id: 3, text: "Master React hooks", completed: false }
-  ])
+  const [todos, setTodos] = useState(loadTodos)
   
   // State for the input field
   const [inputValue, setInputValue] = useState('')
+  
+  // Save todos to localStorage whenever todos change
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos))
+  }, [todos])
   
   // Calculate remaining todos
   const remainingTodos = todos.filter(todo => !todo.completed).length
