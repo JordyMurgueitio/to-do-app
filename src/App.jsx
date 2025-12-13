@@ -105,7 +105,7 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>My Todo App</h1>
+        <h1>To Do's</h1>
         <p>Stay organized and get things done!</p>
       </header>
       
