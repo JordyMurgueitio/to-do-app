@@ -51,6 +51,9 @@ function App() {
   const [filter, setFilter] = useState('all') // 'all', 'active', 'completed'
   const [searchTerm, setSearchTerm] = useState('')
   
+  // State for sorting todos
+  const [sortBy, setSortBy] = useState('created') // 'created', 'category', 'priority', 'dueDate'
+  
   // Save todos to localStorage whenever todos change
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos))
@@ -116,10 +119,12 @@ function App() {
             todos={todos}
             searchTerm={searchTerm}
             filter={filter}
+            sortBy={sortBy}
             onToggle={toggleTodo}
             onDelete={deleteTodo}
             onEdit={editTodo}
             onClearCompleted={clearCompleted}
+            onSortChange={setSortBy}
           />
         </div>
       </main>

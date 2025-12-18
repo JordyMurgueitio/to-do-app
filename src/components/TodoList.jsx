@@ -1,17 +1,21 @@
 import TodoItem from './TodoItem'
+import SortOptions from './SortOptions'
 import './TodoList.css'
 
 function TodoList({ 
   todos, 
   searchTerm, 
   filter,
+  sortBy,
   onToggle, 
   onDelete, 
   onEdit,
-  onClearCompleted 
+  onClearCompleted,
+  onSortChange
 }) {
   const remainingTodos = todos.filter(todo => !todo.completed).length
 
+  // Filter todos
   const filteredTodos = todos.filter(todo => {
     // Filter by completion status
     const statusMatch = filter === 'all' || 
@@ -24,6 +28,29 @@ function TodoList({
                        (todo.category && todo.category.toLowerCase().includes(searchTerm.toLowerCase()))
     
     return statusMatch && searchMatch
+  })
+
+  // Sort todos
+  const sortedTodos = [...filteredTodos].sort((a, b) => {
+    switch (sortBy) {
+      case 'category':
+        return (a.category || '').localeCompare(b.category || '')
+      
+      case 'priority': {
+        const priorityOrder = { high: 0, medium: 1, low: 2 }
+        return priorityOrder[a.priority] - priorityOrder[b.priority]
+      }
+      
+      case 'dueDate':
+        if (!a.dueDate && !b.dueDate) return 0
+        if (!a.dueDate) return 1
+        if (!b.dueDate) return -1
+        return new Date(a.dueDate) - new Date(b.dueDate)
+      
+      case 'created':
+      default:
+        return b.createdAt - a.createdAt
+    }
   })
 
   return (
@@ -42,7 +69,9 @@ function TodoList({
         )}
       </div>
 
-      {filteredTodos.length === 0 ? (
+      <SortOptions sortBy={sortBy} onSortChange={onSortChange} />
+
+      {sortedTodos.length === 0 ? (
         <div className="empty-state">
           <p>
             {searchTerm ? '🔍 No tasks match your search' : 
@@ -53,7 +82,7 @@ function TodoList({
         </div>
       ) : (
         <ul className="todo-list">
-          {filteredTodos.map(todo => (
+          {sortedTodos.map(todo => (
             <TodoItem
               key={todo.id}
               todo={todo}
